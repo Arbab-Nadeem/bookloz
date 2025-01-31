@@ -1,6 +1,10 @@
 'use client';
 
+import { toast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { ZodType } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
 	DefaultValues,
 	FieldValues,
@@ -9,9 +13,11 @@ import {
 	useForm,
 	UseFormReturn,
 } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { ZodType } from 'zod';
+
+import ImageUpload from './ImageUpload';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { FIELD_NAMES, FIELD_TYPES } from '@/constants';
 import {
 	Form,
 	FormControl,
@@ -20,22 +26,23 @@ import {
 	FormLabel,
 	FormMessage,
 } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
-import { FIELD_NAMES, FIELD_TYPES } from '@/constants';
-import ImageUpload from './ImageUpload';
 
+// Interface for the props
 interface Props<T extends FieldValues> {
 	schema: ZodType<T>;
 	defaultValues: T;
 	onSubmit: (data: T) => Promise<{ success: boolean; error?: string }>;
 	type: 'SIGN_UP' | 'SIGN_IN';
 }
+
+//  AuthForm component
 const AuthForm = <T extends FieldValues>({
 	type,
 	schema,
 	defaultValues,
 	onSubmit,
 }: Props<T>) => {
+	const router = useRouter();
 	const isSignIn = type === 'SIGN_IN';
 	const form: UseFormReturn<T> = useForm({
 		resolver: zodResolver(schema),
@@ -43,7 +50,28 @@ const AuthForm = <T extends FieldValues>({
 	});
 
 	// 2. Define a submit handler.
-	const handleSubmit: SubmitHandler<T> = async (data) => {};
+	const handleSubmit: SubmitHandler<T> = async (data) => {
+		const result = await onSubmit(data);
+
+		if (result.success) {
+			console.log('success');
+			toast({
+				title: 'Success',
+				description: isSignIn
+					? `You've successfully signed in`
+					: `You've successfully signed up`,
+				variant: 'success',
+			});
+
+			router.push('/');
+		} else {
+			toast({
+				title: `Error ${isSignIn ? 'Signing in' : 'signing up'}`,
+				description: result.error ?? 'An error occurred',
+				variant: 'destructive',
+			});
+		}
+	};
 	return (
 		<div className='flex flex-col gap-4'>
 			<h1 className='text-2xl font-semibold text-white'>

@@ -4,13 +4,19 @@ import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 
-const Header = () => {
+import React from 'react';
+import { Session } from 'next-auth';
+
+const Header = ({ session }: { session: Session }) => {
 	const pathname = usePathname();
 	return (
 		<header className='my-10 flex justify-between gap-5'>
-			<Link href='/'>
+			<Link
+				href='/'
+				className='text-white text-2xl font-semibold flex items-end gap-1'
+			>
 				<Image src='/icons/logo.svg' alt='logo' width={40} height={40} />
 				Bookloz
 			</Link>
@@ -26,6 +32,15 @@ const Header = () => {
 					>
 						Library
 					</Link>
+					<li>
+						<Link href='/my-profile'>
+							<Avatar>
+								<AvatarFallback className='text-white'>
+									{session?.user?.name}
+								</AvatarFallback>
+							</Avatar>
+						</Link>
+					</li>
 				</li>
 			</ul>
 		</header>
