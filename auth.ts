@@ -6,17 +6,20 @@ import { users } from '@/database/schema';
 import { eq } from 'drizzle-orm';
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
-	session: { strategy: 'jwt' },
+	session: {
+		strategy: 'jwt',
+	},
 	providers: [
 		CredentialsProvider({
-			async authorize() {
+			async authorize(credentials) {
 				if (!credentials?.email || !credentials?.password) {
 					return null;
 				}
+
 				const user = await db
 					.select()
 					.from(users)
-					.where(eq(users.email, credentials?.email.toString()))
+					.where(eq(users.email, credentials.email.toString()))
 					.limit(1);
 
 				if (user.length === 0) return null;
@@ -45,8 +48,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 				token.id = user.id;
 				token.name = user.name;
 			}
+
+			return token;
 		},
-		async sessions({ session, token }) {
+		async session({ session, token }) {
 			if (session.user) {
 				session.user.id = token.id as string;
 				session.user.name = token.name as string;

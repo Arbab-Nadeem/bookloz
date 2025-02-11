@@ -1,6 +1,6 @@
 'use client';
 
-import { cn } from '@/lib/utils';
+import { cn, getInitials } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -32,15 +32,15 @@ const Header = ({ session }: { session: Session }) => {
 					>
 						Library
 					</Link>
-					<li>
-						<Link href='/my-profile'>
-							<Avatar>
-								<AvatarFallback className='text-white'>
-									{session?.user?.name}
-								</AvatarFallback>
-							</Avatar>
-						</Link>
-					</li>
+				</li>
+				<li>
+					<Link href='/my-profile'>
+						<Avatar>
+							<AvatarFallback className='text-dark-100 bg-amber-100'>
+								{getInitials(session?.user?.name || '')}
+							</AvatarFallback>
+						</Avatar>
+					</Link>
 				</li>
 			</ul>
 		</header>
