@@ -51,6 +51,7 @@ export const { POST } = serve<InitialData>(async (context) => {
 				subject: 'Welcome to the platform',
 				message: `Glad to see you here, ${fullName}!`,
 			});
+			console.log('This code ran successfully');
 		} catch (err) {
 			console.error('Error in new-signup step:', err);
 			throw err;

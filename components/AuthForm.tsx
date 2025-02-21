@@ -14,7 +14,7 @@ import {
 	UseFormReturn,
 } from 'react-hook-form';
 
-import ImageUpload from './ImageUpload';
+import FileUpload from './FileUpload';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FIELD_NAMES, FIELD_TYPES } from '@/constants';
@@ -54,7 +54,6 @@ const AuthForm = <T extends FieldValues>({
 		const result = await onSubmit(data);
 
 		if (result.success) {
-			console.log('success');
 			toast({
 				title: 'Success',
 				description: isSignIn
@@ -99,7 +98,14 @@ const AuthForm = <T extends FieldValues>({
 									</FormLabel>
 									<FormControl>
 										{field.name === 'universityCard' ? (
-											<ImageUpload onFileChange={field.onChange} />
+											<FileUpload
+												type='image'
+												accept='image/*'
+												placeholder='Upload your ID'
+												folder='ids'
+												variant='dark'
+												onFileChange={field.onChange}
+											/>
 										) : (
 											<Input
 												type={
